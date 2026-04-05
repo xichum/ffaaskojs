@@ -2,11 +2,15 @@ FROM node:20-alpine3.20
 
 WORKDIR /app
 
-COPY index.js package.json index.html* ./
+RUN apk update && apk add --no-cache bash openssl curl libc6-compat gcompat tzdata
+
+COPY package.json ./
+RUN npm install --production
+
+COPY index.js ./
+
+COPY index.htm[l] ./
 
 EXPOSE 3000
-
-RUN apk update && apk add --no-cache bash openssl curl && \
-    npm install --production
 
 CMD ["node", "index.js"]
