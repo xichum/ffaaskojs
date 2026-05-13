@@ -1,7 +1,7 @@
 name: Push to NPM
 
 on:
-  workflow_dispatch: # 核心：这就是手动触发的开关
+  workflow_dispatch: # 手动触发开关
 
 jobs:
   npm-publish:
@@ -10,16 +10,28 @@ jobs:
       - name: 1. 拉取代码
         uses: actions/checkout@v4
 
-      - name: 2. 安装 Node
+      - name: 2. 安装 Node 环境
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
 
       - name: 3. 安装依赖
-        run: npm install
+        run: npm ci
 
-      - name: 4. 推送到 NPM
+      - name: 4. 执行构建 (如果没有 build 脚本会自动跳过)
+        run: npm run build --if-present
+
+      - name: 5. 生成README
+        run: |
+          node -e "
+            const pkg = require('./package.json');
+            const fs = require('fs');
+            const content = '# ' + pkg.name + '\n\n' + (pkg.description || 'This is a clean package published via CI.') + '\n';
+            fs.writeFileSync('README.md', content);
+          "
+
+      - name: 6. 推送到 NPM
         run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
