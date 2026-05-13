@@ -1,11 +1,12 @@
 {
   "name": "faaskojs",
   "version": "1.0.0",
-  "description": "Web modual",
   "main": "index.js",
-  "scripts": {
-    "start": "node index.js"
-  },
+  "files": [
+    "index.js",
+    "index.html",
+    "package.json"
+  ],
   "dependencies": {
     "ws": "^8.16.0",
     "axios": "^1.12.2"
