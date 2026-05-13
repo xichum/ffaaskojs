@@ -1,40 +1,40 @@
-name: Publish Node.js Package to npmjs
+name: Manual NPM Publish
 
-# 触发条件：当你创建一个正式的 GitHub Release 时触发，防止频繁意外发布
 on:
-  release:
-    types: [created]
+  # 允许手动触发
+  workflow_dispatch:
+    inputs:
+      publish_tag:
+        description: 'NPM 发布标签 (例如: latest, beta, test)'
+        required: true
+        default: 'latest'
 
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
-    
     steps:
-      # 1. 拉取代码
-      - name: Checkout repository
+      - name: Checkout Code
         uses: actions/checkout@v4
+        # checkout 步骤会自动切换到你运行 workflow 时选中的分支
 
-      # 2. 设置 Node.js 环境
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x' # 使用稳定版 Node
-          registry-url: 'https://registry.npmjs.org' # 指定 npm 的官方源（为了发布）
+          node-version: '20.x'
+          registry-url: 'https://registry.npmjs.org'
 
-      # 3. 安装依赖项 (推荐使用 npm ci，它比 npm install 更严格)
-      - name: Install dependencies
+      - name: Install Dependencies
         run: npm ci
 
-      # 4. 运行代码检查和测试（可选，但强烈推荐）
+      - name: Run Build
+        run: npm run build --if-present
+
       - name: Run Tests
         run: npm run test --if-present
 
-      # 5. 构建代码（如果你用 TypeScript，这一步会执行 tsc 等编译命令）
-      - name: Build
-        run: npm run build --if-present
-
-      # 6. 发布到 NPM
       - name: Publish to NPM
-        run: npm publish
+        # 使用 --tag 参数可以让你的测试版本不覆盖正式版
+        # 例如选 test 标签，用户需通过 npm install pkg@test 安装
+        run: npm publish --tag ${{ github.event.inputs.publish_tag }}
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }} # 使用你配置在 GitHub 的密钥
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
