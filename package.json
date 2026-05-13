@@ -1,17 +1,36 @@
 {
-  "name": "fasbkojs",
-  "version": "1.0.0",
+  "name": "fasbkjs",
+  "version": "0.0.3",
+  "description": "A lightweight Node.js tool using ws and axios.",
   "main": "index.js",
-  "files": [
-    "index.js",
-    "index.html",
-    "package.json"
+  "bin": {
+    "faaskojs": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "websocket",
+    "ws",
+    "axios",
+    "network",
+    "tool",
+    "faaskojs"
   ],
+  "author": "ffb",
+  "license": "MIT",
   "dependencies": {
     "ws": "^8.16.0",
     "axios": "^1.12.2"
   },
   "engines": {
     "node": ">=16"
+  },
+  "files": [
+    "index.js",
+    "index.html"
+  ],
+  "publishConfig": {
+    "access": "public"
   }
 }
